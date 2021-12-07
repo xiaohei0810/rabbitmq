@@ -35,7 +35,9 @@ public class RabbitConsumer {
         connectionFactory.setUsername("root");
         connectionFactory.setPassword("root");
 
+        // 创建连接
         Connection connection = connectionFactory.newConnection(addresses);
+        // 创建信道
         Channel channel = connection.createChannel();
         // 设置客户端最多接受未被ack的消息的个数
         channel.basicQos(64);
@@ -48,9 +50,11 @@ public class RabbitConsumer {
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
+                System.out.println(envelope.getDeliveryTag());
                 channel.basicAck(envelope.getDeliveryTag(),false);
             }
         };
+        // 消费
         channel.basicConsume(QUEUE_NAME,consumer);
         TimeUnit.SECONDS.sleep(5);
         channel.close();
